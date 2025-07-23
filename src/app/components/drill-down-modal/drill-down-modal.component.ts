@@ -43,7 +43,9 @@ Chart.register(...registerables);
           <div class="charts-section">
             <div class="chart-container">
               <h4>Current vs Previous Period Comparison</h4>
-              <canvas #comparisonChart></canvas>
+              <div class="chart-wrapper-inner">
+                <canvas #comparisonChart width="800" height="400"></canvas>
+              </div>
             </div>
           </div>
 
@@ -198,8 +200,16 @@ Chart.register(...registerables);
       color: #1e293b;
     }
 
-    .chart-container canvas {
+    .chart-wrapper-inner {
+      position: relative;
+      width: 100%;
       max-height: 400px;
+      min-height: 300px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .table-section h4 {
