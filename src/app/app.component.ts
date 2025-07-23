@@ -1,14 +1,23 @@
 import { Component } from '@angular/core';
-import { RouterOutlet } from '@angular/router';
-import { DashboardComponent } from "./components/dashboard/dashboard.component";
+import { CommonModule } from '@angular/common';
+import { DashboardComponent } from './components/dashboard/dashboard.component';
 
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [RouterOutlet, DashboardComponent],
-  templateUrl: './app.component.html',
-  styleUrl: './app.component.css'
+  imports: [CommonModule, DashboardComponent],
+  template: `
+    <div class="app-container">
+      <app-dashboard></app-dashboard>
+    </div>
+  `,
+  styles: [`
+    .app-container {
+      min-height: 100vh;
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
+    }
+  `]
 })
 export class AppComponent {
-  title = 'financial-dashboard';
+  title = 'Financial Dashboard';
 }

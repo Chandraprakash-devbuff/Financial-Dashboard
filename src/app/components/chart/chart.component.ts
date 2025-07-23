@@ -1,23 +1,6 @@
-import {
-  Component,
-  Input,
-  OnInit,
-  OnDestroy,
-  AfterViewInit,
-  OnChanges,
-  SimpleChanges,
-  ViewChild,
-  ElementRef,
-} from '@angular/core';
+import { Component, Input, OnInit, OnDestroy, AfterViewInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import {
-  Chart,
-  ChartConfiguration,
-  ChartData,
-  ChartDataset,
-  ChartType,
-  registerables,
-} from 'chart.js';
+import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
 Chart.register(...registerables);
 
@@ -35,61 +18,37 @@ Chart.register(...registerables);
       </div>
     </div>
   `,
-  styles: [
-    `
-      .chart-wrapper {
-        padding: 20px;
-      }
+  styles: [`
+    .chart-wrapper {
+      padding: 20px;
+    }
 
-      .chart-header {
-        margin-bottom: 20px;
-      }
+    .chart-header h3 {
+      margin: 0 0 20px 0;
+      font-size: 18px;
+      font-weight: 600;
+      color: #2c3e50;
+    }
 
-      .chart-header h3 {
-        margin: 0;
-        font-size: 18px;
-        font-weight: 600;
-        color: #2c3e50;
-      }
-
-      .chart-container {
-        position: relative;
-        width: 100%;
-        height: 300px;
-      }
-
-      canvas {
-        max-width: 100%;
-        height: auto !important;
-      }
-    `,
-  ],
+    .chart-container {
+      position: relative;
+      width: 100%;
+      height: 300px;
+    }
+  `]
 })
-export class ChartComponent
-  implements OnInit, AfterViewInit, OnDestroy, OnChanges
-{
-  @ViewChild('chartCanvas', { static: true })
-  chartCanvas!: ElementRef<HTMLCanvasElement>;
+export class ChartComponent implements OnInit, AfterViewInit, OnDestroy {
+  @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
   @Input() title!: string;
   @Input() data: any;
-  @Input() type: ChartType = 'line';
-  @Input() height = 300;
-  @Input() width = 600;
+  @Input() type: 'line' | 'doughnut' = 'line';
 
   private chart: Chart | null = null;
 
-  ngOnInit() {
-    // Component initialization
-  }
+  ngOnInit() {}
 
   ngAfterViewInit() {
     this.createChart();
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (this.chart && (changes['data'] || changes['type'])) {
-      this.updateChart();
-    }
   }
 
   ngOnDestroy() {
@@ -99,10 +58,6 @@ export class ChartComponent
   }
 
   private createChart() {
-    if (this.chart) {
-      this.chart.destroy();
-    }
-
     const ctx = this.chartCanvas.nativeElement.getContext('2d');
     if (!ctx) return;
 
@@ -110,48 +65,30 @@ export class ChartComponent
     this.chart = new Chart(ctx, config);
   }
 
-  private updateChart() {
-    if (!this.chart) return;
-
-    const config = this.getChartConfig();
-    this.chart.data = config.data!;
-    this.chart.options = config.options!;
-    this.chart.update();
-  }
-
   private getChartConfig(): ChartConfiguration {
-    if (this.type === 'line') {
-      return this.getLineChartConfig();
-    } else if (this.type === 'doughnut') {
-      return this.getDoughnutChartConfig();
+    if (this.type === 'doughnut') {
+      return this.getDoughnutConfig();
     }
-    return this.getLineChartConfig();
+    return this.getLineConfig();
   }
 
-  private getLineChartConfig(): ChartConfiguration {
+  private getLineConfig(): ChartConfiguration {
     const values = this.data?.values || [];
-    const labels = this.data?.labels || values.map((_: any, index: number) => `City ${index + 1}`);
+    const labels = this.data?.labels || [];
 
     return {
       type: 'line',
       data: {
         labels: labels,
-        datasets: [
-          {
-            label: 'Revenue',
-            data: values,
-            borderColor: '#3b82f6',
-            backgroundColor: 'rgba(59, 130, 246, 0.1)',
-            borderWidth: 3,
-            fill: true,
-            tension: 0.4,
-            pointBackgroundColor: '#3b82f6',
-            pointBorderColor: '#ffffff',
-            pointBorderWidth: 2,
-            pointRadius: 5,
-            pointHoverRadius: 7,
-          },
-        ],
+        datasets: [{
+          label: 'Revenue',
+          data: values,
+          borderColor: '#3b82f6',
+          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4
+        }]
       },
       options: {
         responsive: true,
@@ -159,142 +96,45 @@ export class ChartComponent
         plugins: {
           legend: {
             display: true,
-            position: 'top',
-            labels: {
-              usePointStyle: true,
-              padding: 20,
-              font: {
-                size: 12,
-                family: 'Arial, sans-serif',
-              },
-            },
-          },
-          tooltip: {
-            backgroundColor: 'rgba(30, 41, 59, 0.9)',
-            titleColor: '#f1f5f9',
-            bodyColor: '#f1f5f9',
-            borderColor: '#3b82f6',
-            borderWidth: 1,
-            cornerRadius: 6,
-            displayColors: false,
-          },
+            position: 'top'
+          }
         },
         scales: {
-          x: {
-            grid: {
-              display: false,
-            },
-            ticks: {
-              font: {
-                size: 11,
-              },
-              color: '#64748b',
-            },
-          },
           y: {
             beginAtZero: true,
-            grid: {
-              color: 'rgba(148, 163, 184, 0.2)',
-            },
             ticks: {
-              font: {
-                size: 11,
-              },
-              color: '#64748b',
-              callback: function (value: any) {
+              callback: function(value: any) {
                 return '₹' + value.toLocaleString();
-              },
-            },
-          },
-        },
-        elements: {
-          point: {
-            hoverBackgroundColor: '#3b82f6',
-          },
-        },
-      },
+              }
+            }
+          }
+        }
+      }
     };
   }
 
-  private getDoughnutChartConfig(): ChartConfiguration {
-    const segments = this.data?.segments || [
-      { label: 'Cash', value: 45, color: '#3b82f6' },
-      { label: 'Card', value: 30, color: '#10b981' },
-      { label: 'Digital', value: 25, color: '#f59e0b' },
-    ];
+  private getDoughnutConfig(): ChartConfiguration {
+    const segments = this.data?.segments || [];
 
     return {
       type: 'doughnut',
       data: {
         labels: segments.map((s: any) => s.label),
-        datasets: [
-          {
-            data: segments.map((s: any) => s.value),
-            backgroundColor: segments.map((s: any) => s.color),
-            borderColor: '#ffffff',
-            borderWidth: 2,
-            hoverBorderWidth: 3,
-            hoverOffset: 10,
-          },
-        ],
+        datasets: [{
+          data: segments.map((s: any) => s.value),
+          backgroundColor: segments.map((s: any) => s.color),
+          borderWidth: 2
+        }]
       },
       options: {
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
           legend: {
-            display: true,
-            position: 'right',
-            labels: {
-              usePointStyle: true,
-              padding: 15,
-              font: {
-                size: 12,
-                family: 'Arial, sans-serif',
-              },
-              generateLabels: (chart: Chart) => {
-                const data: ChartData = chart.data;
-                if (data.labels && data.datasets.length) {
-                  return (data.labels as string[]).map(
-                    (label: string, i: number) => {
-                      const dataset = data.datasets[0] as ChartDataset;
-                      const value = dataset.data[i] as number;
-                      return {
-                        text: `${label}: ${value}%`,
-                        fillStyle: (dataset.backgroundColor as string[])[i],
-                        strokeStyle: dataset.borderColor as string,
-                        lineWidth: dataset.borderWidth as number,
-                        hidden: false,
-                        index: i,
-                      };
-                    }
-                  );
-                }
-                return [];
-              },
-            },
-          },
-          tooltip: {
-            backgroundColor: 'rgba(30, 41, 59, 0.9)',
-            titleColor: '#f1f5f9',
-            bodyColor: '#f1f5f9',
-            borderColor: '#3b82f6',
-            borderWidth: 1,
-            cornerRadius: 6,
-            callbacks: {
-              label: function (context: any) {
-                return `${context.label}: ${context.parsed}%`;
-              },
-            },
-          },
-        },
-        cutout: '60%',
-        elements: {
-          arc: {
-            borderWidth: 2,
-          },
-        },
-      } as any,
+            position: 'right'
+          }
+        }
+      }
     };
   }
 }

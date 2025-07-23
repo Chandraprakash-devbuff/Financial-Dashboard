@@ -1,15 +1,14 @@
 import { Injectable } from '@angular/core';
-import { DashboardData, KPIData, DrillDownData } from '../models/dashboard.model';
 
 @Injectable({
   providedIn: 'root'
 })
 export class DashboardService {
   
-  private sampleData: DashboardData = {
+  private sampleData = {
     "reportRunDate": "20-06-2025",
     "paymentReports": {
-      "reportType": "Payment Mode (Paying & Free)\nExcluding VC & CC Revenue",
+      "reportType": "Payment Mode (Paying & Free)",
       "data": [
         {
           "Patient_Type": "Grand Total (Paying, Free, CC, VCs)",
@@ -50,44 +49,6 @@ export class DashboardService {
           "Kovilpatti": 9780
         },
         {
-          "Patient_Type": "Treatment charges",
-          "Total": 1152600,
-          "Madurai": 250765,
-          "Tirunelveli": 84300,
-          "Coimbatore": 282155,
-          "Pondy": 273590,
-          "Salem": 49530,
-          "Chennai": 209600,
-          "Tirupathi": 2310,
-          "Thanjavur": 100,
-          "Theni": 50,
-          "Dindigul": 0,
-          "Tuticorin": 150,
-          "CBE_CITY": 0,
-          "Tiruppur": 0,
-          "Udumalpet": 0,
-          "Kovilpatti": 50
-        },
-        {
-          "Patient_Type": "Investigations",
-          "Total": 1901302,
-          "Madurai": 517204,
-          "Tirunelveli": 253638,
-          "Coimbatore": 341845,
-          "Pondy": 170775,
-          "Salem": 55330,
-          "Chennai": 300785,
-          "Tirupathi": 125255,
-          "Thanjavur": 17760,
-          "Theni": 53575,
-          "Dindigul": 12960,
-          "Tuticorin": 7005,
-          "CBE_CITY": 20330,
-          "Tiruppur": 15680,
-          "Udumalpet": 7330,
-          "Kovilpatti": 1830
-        },
-        {
           "Patient_Type": "Surgical/Lasers",
           "Total": 25582107,
           "Madurai": 5742545,
@@ -105,25 +66,6 @@ export class DashboardService {
           "Tiruppur": 358270,
           "Udumalpet": 551850,
           "Kovilpatti": 201030
-        },
-        {
-          "Patient_Type": "Others",
-          "Total": 1031918,
-          "Madurai": 264364,
-          "Tirunelveli": 126517,
-          "Coimbatore": 154969,
-          "Pondy": 96073,
-          "Salem": 33600,
-          "Chennai": 183715,
-          "Tirupathi": 102380,
-          "Thanjavur": 0,
-          "Theni": 20400,
-          "Dindigul": 13160,
-          "Tuticorin": 13240,
-          "CBE_CITY": 2350,
-          "Tiruppur": 6580,
-          "Udumalpet": 9400,
-          "Kovilpatti": 5170
         }
       ]
     },
@@ -148,25 +90,6 @@ export class DashboardService {
           "Tiruppur": 7880,
           "Udumalpet": 143540,
           "Kovilpatti": 83330
-        },
-        {
-          "Patient_Type": "Corporate/Insurance",
-          "Total": 7459789,
-          "Madurai": 1360723,
-          "Tirunelveli": 881963,
-          "Coimbatore": 651849,
-          "Pondy": 671839,
-          "Salem": 431500,
-          "Chennai": 1649253,
-          "Tirupathi": 1202039,
-          "Thanjavur": 0,
-          "Theni": 140213,
-          "Dindigul": 192115,
-          "Tuticorin": 62762,
-          "CBE_CITY": 70100,
-          "Tiruppur": 74733,
-          "Udumalpet": 51000,
-          "Kovilpatti": 19700
         },
         {
           "Patient_Type": "Card Collections",
@@ -207,54 +130,6 @@ export class DashboardService {
           "Kovilpatti": 99180
         }
       ]
-    },
-    "paymentPercentReports": {
-      "reportType": "% of All payments",
-      "data": [
-        {
-          "Patient_Type": "Total",
-          "Total": "64.63%",
-          "Madurai": "61.26%",
-          "Tirunelveli": "59.31%",
-          "Coimbatore": "50.90%",
-          "Pondy": "65.31%",
-          "Salem": "60.99%",
-          "Chennai": "76.44%",
-          "Tirupathi": "73.77%",
-          "Thanjavur": "24.99%",
-          "Theni": "65.05%",
-          "Dindigul": "66.08%",
-          "Tuticorin": "79.60%",
-          "CBE_CITY": "87.68%",
-          "Tiruppur": "97.44%",
-          "Udumalpet": "72.14%",
-          "Kovilpatti": "57.73%"
-        }
-      ]
-    },
-    "paymentBaseHospitalReports": {
-      "reportType": "Payment Mode",
-      "data": [
-        {
-          "Patient_Type": "Cash % of Total Collections",
-          "Total": "27.11%",
-          "Madurai": "31.03%",
-          "Tirunelveli": "31.81%",
-          "Coimbatore": "41.50%",
-          "Pondy": "27.97%",
-          "Salem": "25.37%",
-          "Chennai": "17.02%",
-          "Tirupathi": "15.01%",
-          "Thanjavur": "75.01%",
-          "Theni": "28.81%",
-          "Dindigul": "25.53%",
-          "Tuticorin": "17.00%",
-          "CBE_CITY": "8.18%",
-          "Tiruppur": "2.37%",
-          "Udumalpet": "25.55%",
-          "Kovilpatti": "38.43%"
-        }
-      ]
     }
   };
 
@@ -264,58 +139,30 @@ export class DashboardService {
     'CBE_CITY', 'Tiruppur', 'Udumalpet', 'Kovilpatti'
   ];
 
-  getDashboardData(period: string = 'mtd') {
-    // Load data from the JSON file
-    const data = this.loadDataFromFile();
+  getDashboardData() {
+    const grandTotal = this.sampleData.paymentReports.data[0];
+    const consultingFees = this.sampleData.paymentReports.data[1];
+    const surgicalLasers = this.sampleData.paymentReports.data[2];
     
-    const grandTotal = data.paymentReports.data[0];
-    const consultingFees = data.paymentReports.data[1];
-    const treatmentCharges = data.paymentReports.data[2];
-    const investigations = data.paymentReports.data[3];
-    const surgicalLasers = data.paymentReports.data[4];
-    
-    const cashCollection = data.cardReports.data[0];
-    const corporateInsurance = data.cardReports.data[1];
-    const cardCollection = data.cardReports.data[2];
-    const digitalCollection = data.cardReports.data[3];
-
-    // Calculate KPIs based on real data
-    const totalRevenue = grandTotal.Total;
-    const totalCashCollection = cashCollection.Total;
-    const totalCardCollection = cardCollection.Total;
-    const totalDigitalCollection = digitalCollection.Total;
-    const totalConsultingFees = consultingFees.Total;
-    const totalSurgicalRevenue = surgicalLasers.Total;
-    const totalTreatmentCharges = treatmentCharges.Total;
-    const totalInvestigations = investigations.Total;
-
-    // Calculate averages and percentages
-    const avgRevenuePerPatient = Math.round(totalRevenue / 15000); // Assuming 15000 patients
-    const digitalPaymentPercentage = ((totalCardCollection + totalDigitalCollection) / (totalCashCollection + totalCardCollection + totalDigitalCollection)) * 100;
+    const cashCollection = this.sampleData.cardReports.data[0];
+    const cardCollection = this.sampleData.cardReports.data[1];
+    const digitalCollection = this.sampleData.cardReports.data[2];
 
     return {
-      totalRevenue,
-      totalCashCollection,
-      totalCardCollection,
-      totalDigitalCollection,
-      totalConsultingFees,
-      totalSurgicalRevenue,
-      totalTreatmentCharges,
-      totalInvestigations,
-      avgRevenuePerPatient,
-      digitalPaymentPercentage,
+      totalRevenue: grandTotal.Total,
+      totalCashCollection: cashCollection.Total,
+      totalCardCollection: cardCollection.Total,
+      totalDigitalCollection: digitalCollection.Total,
+      totalConsultingFees: consultingFees.Total,
+      totalSurgicalRevenue: surgicalLasers.Total,
       
-      // Trends (simulated)
+      // Simulated trends
       revenueTrend: 8.5,
       cashTrend: -2.3,
       cardTrend: 12.7,
       digitalTrend: 15.2,
       consultingTrend: 5.8,
       surgicalTrend: 9.1,
-      treatmentTrend: 7.2,
-      investigationsTrend: 4.8,
-      avgRevenueTrend: 3.2,
-      digitalPercentTrend: 4.5,
       
       // Chart data
       revenueChartData: {
@@ -325,78 +172,19 @@ export class DashboardService {
       
       paymentModeData: {
         segments: [
-          { label: 'Cash', value: Math.round((totalCashCollection / (totalCashCollection + totalCardCollection + totalDigitalCollection)) * 100), color: '#3b82f6' },
-          { label: 'Card', value: Math.round((totalCardCollection / (totalCashCollection + totalCardCollection + totalDigitalCollection)) * 100), color: '#10b981' },
-          { label: 'Digital', value: Math.round((totalDigitalCollection / (totalCashCollection + totalCardCollection + totalDigitalCollection)) * 100), color: '#f59e0b' }
+          { label: 'Cash', value: 35, color: '#3b82f6' },
+          { label: 'Card', value: 30, color: '#10b981' },
+          { label: 'Digital', value: 35, color: '#f59e0b' }
         ]
       },
       
-      // City breakdown data
       cityRevenueData: this.cities.map(city => ({
         city,
         revenue: (grandTotal as any)[city] || 0,
         cash: (cashCollection as any)[city] || 0,
         card: (cardCollection as any)[city] || 0,
         digital: (digitalCollection as any)[city] || 0
-      })),
-
-      // Raw data for drill-down
-      rawData: data
+      }))
     };
-  }
-
-  private loadDataFromFile() {
-    // In a real application, this would be an HTTP call
-    // For now, we'll use the embedded data
-    return this.sampleData;
-  }
-
-  getDrillDownData(kpiType: string): DrillDownData {
-    const currentData = this.getDashboardData();
-    
-    // Simulate previous period data (90% of current for demo)
-    const previousMultiplier = 0.9;
-    
-    switch (kpiType) {
-      case 'totalRevenue':
-        return {
-          kpiTitle: 'Total Revenue',
-          currentValue: currentData.totalRevenue,
-          previousValue: Math.round(currentData.totalRevenue * previousMultiplier),
-          trend: ((currentData.totalRevenue - (currentData.totalRevenue * previousMultiplier)) / (currentData.totalRevenue * previousMultiplier)) * 100,
-          cityData: currentData.cityRevenueData.map(city => ({
-            city: city.city,
-            current: city.revenue,
-            previous: Math.round(city.revenue * previousMultiplier),
-            change: ((city.revenue - (city.revenue * previousMultiplier)) / (city.revenue * previousMultiplier)) * 100
-          })),
-          tableData: currentData.cityRevenueData
-        };
-      
-      case 'cashCollection':
-        return {
-          kpiTitle: 'Cash Collection',
-          currentValue: currentData.totalCashCollection,
-          previousValue: Math.round(currentData.totalCashCollection * previousMultiplier),
-          trend: ((currentData.totalCashCollection - (currentData.totalCashCollection * previousMultiplier)) / (currentData.totalCashCollection * previousMultiplier)) * 100,
-          cityData: currentData.cityRevenueData.map(city => ({
-            city: city.city,
-            current: city.cash,
-            previous: Math.round(city.cash * previousMultiplier),
-            change: ((city.cash - (city.cash * previousMultiplier)) / (city.cash * previousMultiplier)) * 100
-          })),
-          tableData: currentData.cityRevenueData.map(city => ({ city: city.city, amount: city.cash }))
-        };
-      
-      default:
-        return {
-          kpiTitle: 'Unknown KPI',
-          currentValue: 0,
-          previousValue: 0,
-          trend: 0,
-          cityData: [],
-          tableData: []
-        };
-    }
   }
 }
