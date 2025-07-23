@@ -3,12 +3,13 @@ import { CommonModule } from '@angular/common';
 import { KpiCardComponent } from '../kpi-card/kpi-card.component';
 import { ChartComponent } from '../chart/chart.component';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { DrillDownModalComponent } from '../drill-down-modal/drill-down-modal.component';
 import { DashboardService } from '../../services/dashboard.service';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, KpiCardComponent, ChartComponent, DataTableComponent],
+  imports: [CommonModule, KpiCardComponent, ChartComponent, DataTableComponent, DrillDownModalComponent],
   template: `
     <div class="dashboard-container">
       <!-- Header -->
@@ -34,7 +35,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalRevenue || 0"
           [trend]="dashboardData.revenueTrend || 0"
           format="currency"
-          trendColor="success">
+          trendColor="success"
+          kpiType="totalRevenue"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
@@ -42,7 +45,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalCashCollection || 0"
           [trend]="dashboardData.cashTrend || 0"
           format="currency"
-          trendColor="warning">
+          trendColor="warning"
+          kpiType="cashCollection"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
@@ -50,7 +55,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalCardCollection || 0"
           [trend]="dashboardData.cardTrend || 0"
           format="currency"
-          trendColor="info">
+          trendColor="info"
+          kpiType="cardCollection"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
@@ -58,7 +65,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalDigitalCollection || 0"
           [trend]="dashboardData.digitalTrend || 0"
           format="currency"
-          trendColor="success">
+          trendColor="success"
+          kpiType="digitalCollection"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
@@ -66,7 +75,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalConsultingFees || 0"
           [trend]="dashboardData.consultingTrend || 0"
           format="currency"
-          trendColor="info">
+          trendColor="info"
+          kpiType="consultingFees"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
@@ -74,7 +85,9 @@ import { DashboardService } from '../../services/dashboard.service';
           [value]="dashboardData.totalSurgicalRevenue || 0"
           [trend]="dashboardData.surgicalTrend || 0"
           format="currency"
-          trendColor="success">
+          trendColor="success"
+          kpiType="surgicalRevenue"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
       </div>
 
@@ -108,6 +121,13 @@ import { DashboardService } from '../../services/dashboard.service';
         </div>
       </div>
     </div>
+
+    <!-- Drill Down Modal -->
+    <app-drill-down-modal
+      [isVisible]="showDrillDown"
+      [drillDownData]="currentDrillDownData"
+      (close)="closeDrillDown()">
+    </app-drill-down-modal>
   `,
   styles: [`
     .dashboard-container {
@@ -236,6 +256,8 @@ import { DashboardService } from '../../services/dashboard.service';
 })
 export class DashboardComponent implements OnInit {
   dashboardData: any = {};
+  showDrillDown = false;
+  currentDrillDownData: any = null;
   
   cityRevenueColumns = [
     { key: 'city', label: 'City' },
@@ -253,6 +275,16 @@ export class DashboardComponent implements OnInit {
 
   refreshData() {
     this.loadDashboardData();
+  }
+
+  onKpiCardClick(kpiType: string) {
+    this.currentDrillDownData = this.dashboardService.getKPIDrilldownData(kpiType);
+    this.showDrillDown = true;
+  }
+
+  closeDrillDown() {
+    this.showDrillDown = false;
+    this.currentDrillDownData = null;
   }
 
   private loadDashboardData() {

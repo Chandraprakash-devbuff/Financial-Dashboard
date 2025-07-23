@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
 
 @Component({
@@ -6,14 +6,9 @@ import { CommonModule } from '@angular/common';
   standalone: true,
   imports: [CommonModule],
   template: `
-    <div class="kpi-card" [class]="'kpi-card--' + trendColor">
+    <div class="kpi-card" [class]="'kpi-card--' + trendColor" (click)="onCardClick()">
       <div class="kpi-header">
         <h3 class="kpi-title">{{title}}</h3>
-        <div class="kpi-icon" [class]="'kpi-icon--' + trendColor">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
-            <path d="M12 2L2 7v10c0 5.55 3.84 9.739 9 11 5.16-1.261 9-5.45 9-11V7l-10-5z"/>
-          </svg>
-        </div>
       </div>
       
       <div class="kpi-content">
@@ -30,6 +25,13 @@ import { CommonModule } from '@angular/common';
           </div>
         </div>
       </div>
+      
+      <div class="drill-down-hint">
+        <span>Click to drill down</span>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+          <path d="M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z"/>
+        </svg>
+      </div>
     </div>
   `,
   styles: [`
@@ -42,6 +44,8 @@ import { CommonModule } from '@angular/common';
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
       min-height: 160px;
+      cursor: pointer;
+      position: relative;
     }
 
     .kpi-card:hover {
@@ -70,24 +74,11 @@ import { CommonModule } from '@angular/common';
       letter-spacing: 0.8px;
     }
 
-    .kpi-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 10px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .kpi-icon--success { background: rgba(16, 185, 129, 0.2); color: #10b981; }
-    .kpi-icon--danger { background: rgba(239, 68, 68, 0.2); color: #ef4444; }
-    .kpi-icon--warning { background: rgba(245, 158, 11, 0.2); color: #f59e0b; }
-    .kpi-icon--info { background: rgba(59, 130, 246, 0.2); color: #3b82f6; }
-
     .kpi-content {
       display: flex;
       justify-content: space-between;
       align-items: flex-end;
+      margin-bottom: 16px;
     }
 
     .kpi-value {
@@ -118,6 +109,20 @@ import { CommonModule } from '@angular/common';
       background: rgba(148, 163, 184, 0.2); 
       color: #94a3b8; 
     }
+
+    .drill-down-hint {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 12px;
+      color: #64748b;
+      opacity: 0.7;
+      transition: opacity 0.3s ease;
+    }
+
+    .kpi-card:hover .drill-down-hint {
+      opacity: 1;
+    }
   `]
 })
 export class KpiCardComponent {
@@ -126,6 +131,12 @@ export class KpiCardComponent {
   @Input() trend: number | null = null;
   @Input() format = 'currency';
   @Input() trendColor = 'info';
+  @Input() kpiType!: string;
+  @Output() cardClick = new EventEmitter<string>();
+
+  onCardClick() {
+    this.cardClick.emit(this.kpiType);
+  }
 
   getFormattedValue(): string {
     if (this.format === 'currency') {
