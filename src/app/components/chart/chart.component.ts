@@ -1,17 +1,28 @@
-import { Component, Input, OnInit, ElementRef, ViewChild } from '@angular/core';
+import { Component, Input, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { BaseChartDirective } from 'ng2-charts';
+import { Chart, ChartConfiguration, ChartData, ChartEvent, ChartType, registerables } from 'chart.js';
+
+Chart.register(...registerables);
 
 @Component({
   selector: 'app-chart',
   standalone: true,
-  imports: [CommonModule],
+  imports: [CommonModule, BaseChartDirective],
   template: `
     <div class="chart-wrapper">
       <div class="chart-header">
         <h3>{{title}}</h3>
       </div>
       <div class="chart-container">
-        <canvas #chartCanvas [width]="width" [height]="height"></canvas>
+        <canvas 
+          baseChart
+          [data]="chartData"
+          [options]="chartOptions"
+          [type]="chartType"
+          [width]="width"
+          [height]="height">
+        </canvas>
       </div>
     </div>
   `,
@@ -34,119 +45,203 @@ import { CommonModule } from '@angular/common';
     .chart-container {
       position: relative;
       width: 100%;
+      height: 300px;
     }
 
     canvas {
       max-width: 100%;
-      height: auto;
+      height: auto !important;
     }
   `]
 })
 export class ChartComponent implements OnInit {
-  @ViewChild('chartCanvas', { static: true }) canvas!: ElementRef<HTMLCanvasElement>;
   @Input() title!: string;
   @Input() data: any;
-  @Input() type = 'line';
+  @Input() type: ChartType = 'line';
   @Input() height = 300;
   @Input() width = 600;
 
+  public chartData!: ChartData;
+  public chartOptions!: ChartConfiguration['options'];
+  public chartType!: ChartType;
+
   ngOnInit() {
-    this.renderChart();
+    this.setupChart();
   }
 
-  private renderChart() {
-    const ctx = this.canvas.nativeElement.getContext('2d');
-    if (!ctx) return;
-
-    this.drawSimpleChart(ctx);
-  }
-
-  private drawSimpleChart(ctx: CanvasRenderingContext2D) {
-    const canvas = ctx.canvas;
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
-
+  private setupChart() {
+    this.chartType = this.type as ChartType;
+    
     if (this.type === 'line') {
-      this.drawLineChart(ctx);
+      this.setupLineChart();
     } else if (this.type === 'doughnut') {
-      this.drawDoughnutChart(ctx);
+      this.setupDoughnutChart();
     }
   }
 
-  private drawLineChart(ctx: CanvasRenderingContext2D) {
-    const canvas = ctx.canvas;
-    const padding = 40;
-    const width = canvas.width - 2 * padding;
-    const height = canvas.height - 2 * padding;
+  private setupLineChart() {
+    const values = this.data?.values || [100, 150, 120, 180, 160, 200, 175, 220];
+    const labels = values.map((_: any, index: number) => `Day ${index + 1}`);
 
-    // Sample data for line chart
-    const points = this.data?.values || [100, 150, 120, 180, 160, 200, 175, 220];
-    const maxValue = Math.max(...points);
-    const minValue = Math.min(...points);
-    const range = maxValue - minValue;
+    this.chartData = {
+      labels: labels,
+      datasets: [
+        {
+          label: 'Revenue',
+          data: values,
+          borderColor: '#3498db',
+          backgroundColor: 'rgba(52, 152, 219, 0.1)',
+          borderWidth: 3,
+          fill: true,
+          tension: 0.4,
+          pointBackgroundColor: '#3498db',
+          pointBorderColor: '#ffffff',
+          pointBorderWidth: 2,
+          pointRadius: 5,
+          pointHoverRadius: 7
+        }
+      ]
+    };
 
-    ctx.strokeStyle = '#3498db';
-    ctx.lineWidth = 3;
-
-    ctx.beginPath();
-    points.forEach((point:number, index:number) => {
-      const x = padding + (index / (points.length - 1)) * width;
-      const y = padding + height - ((point - minValue) / range) * height;
-      
-      if (index === 0) {
-        ctx.moveTo(x, y);
-      } else {
-        ctx.lineTo(x, y);
+    this.chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'top',
+          labels: {
+            usePointStyle: true,
+            padding: 20,
+            font: {
+              size: 12,
+              family: 'Arial, sans-serif'
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#3498db',
+          borderWidth: 1,
+          cornerRadius: 6,
+          displayColors: false
+        }
+      },
+      scales: {
+        x: {
+          grid: {
+            display: false
+          },
+          ticks: {
+            font: {
+              size: 11
+            },
+            color: '#7f8c8d'
+          }
+        },
+        y: {
+          beginAtZero: true,
+          grid: {
+            color: 'rgba(0, 0, 0, 0.1)',
+            drawBorder: false
+          },
+          ticks: {
+            font: {
+              size: 11
+            },
+            color: '#7f8c8d',
+            callback: function(value: any) {
+              return '$' + value.toLocaleString();
+            }
+          }
+        }
+      },
+      elements: {
+        point: {
+          hoverBackgroundColor: '#3498db'
+        }
       }
-    });
-    ctx.stroke();
-
-    // Draw points
-    ctx.fillStyle = '#3498db';
-    points.forEach((point:number, index:number) => {
-      const x = padding + (index / (points.length - 1)) * width;
-      const y = padding + height - ((point - minValue) / range) * height;
-      
-      ctx.beginPath();
-      ctx.arc(x, y, 4, 0, 2 * Math.PI);
-      ctx.fill();
-    });
+    };
   }
 
-  private drawDoughnutChart(ctx: CanvasRenderingContext2D) {
-    const canvas = ctx.canvas;
-    const centerX = canvas.width / 2;
-    const centerY = canvas.height / 2;
-    const radius = Math.min(centerX, centerY) - 20;
-    const innerRadius = radius * 0.6;
-
-    // Sample data for doughnut chart
-    const data = this.data?.segments || [
+  private setupDoughnutChart() {
+    const segments = this.data?.segments || [
       { label: 'Cash', value: 45, color: '#3498db' },
       { label: 'Credit Card', value: 30, color: '#2ecc71' },
-      { label: 'Check', value: 15, color: '#f39c12' },
-      { label: 'Other', value: 10, color: '#e74c3c' }
+      { label: 'Insurance', value: 20, color: '#f39c12' },
+      { label: 'Other', value: 5, color: '#e74c3c' }
     ];
 
-    const total = data.reduce((sum: number, item: any) => sum + item.value, 0);
-    let currentAngle = -Math.PI / 2; // Start from top
+    this.chartData = {
+      labels: segments.map((s: any) => s.label),
+      datasets: [
+        {
+          data: segments.map((s: any) => s.value),
+          backgroundColor: segments.map((s: any) => s.color),
+          borderColor: '#ffffff',
+          borderWidth: 2,
+          hoverBorderWidth: 3,
+          hoverOffset: 10
+        }
+      ]
+    };
 
-    data.forEach((segment: any) => {
-      const sliceAngle = (segment.value / total) * 2 * Math.PI;
-
-      ctx.fillStyle = segment.color;
-      ctx.beginPath();
-      ctx.arc(centerX, centerY, radius, currentAngle, currentAngle + sliceAngle);
-      ctx.arc(centerX, centerY, innerRadius, currentAngle + sliceAngle, currentAngle, true);
-      ctx.closePath();
-      ctx.fill();
-
-      currentAngle += sliceAngle;
-    });
-
-    // Center circle
-    ctx.fillStyle = '#f8f9fa';
-    ctx.beginPath();
-    ctx.arc(centerX, centerY, innerRadius, 0, 2 * Math.PI);
-    ctx.fill();
+    this.chartOptions = {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: {
+          display: true,
+          position: 'right',
+          labels: {
+            usePointStyle: true,
+            padding: 15,
+            font: {
+              size: 12,
+              family: 'Arial, sans-serif'
+            },
+            generateLabels: (chart) => {
+              const data = chart.data;
+              if (data.labels && data.datasets.length) {
+                return data.labels.map((label, i) => {
+                  const dataset = data.datasets[0];
+                  const value = dataset.data[i] as number;
+                  return {
+                    text: `${label}: ${value}%`,
+                    fillStyle: dataset.backgroundColor?.[i] as string,
+                    strokeStyle: dataset.borderColor as string,
+                    lineWidth: dataset.borderWidth as number,
+                    hidden: false,
+                    index: i
+                  };
+                });
+              }
+              return [];
+            }
+          }
+        },
+        tooltip: {
+          backgroundColor: 'rgba(0, 0, 0, 0.8)',
+          titleColor: '#ffffff',
+          bodyColor: '#ffffff',
+          borderColor: '#3498db',
+          borderWidth: 1,
+          cornerRadius: 6,
+          callbacks: {
+            label: function(context: any) {
+              return `${context.label}: ${context.parsed}%`;
+            }
+          }
+        }
+      },
+      cutout: '60%',
+      elements: {
+        arc: {
+          borderWidth: 2
+        }
+      }
+    };
   }
 }
