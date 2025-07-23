@@ -1,6 +1,23 @@
-import { Component, Input, OnInit, OnDestroy, AfterViewInit, OnChanges, SimpleChanges, ViewChild, ElementRef } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  OnDestroy,
+  AfterViewInit,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+  ElementRef,
+} from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Chart, ChartConfiguration, ChartData, ChartType, registerables } from 'chart.js';
+import {
+  Chart,
+  ChartConfiguration,
+  ChartData,
+  ChartDataset,
+  ChartType,
+  registerables,
+} from 'chart.js';
 
 Chart.register(...registerables);
 
@@ -11,43 +28,48 @@ Chart.register(...registerables);
   template: `
     <div class="chart-wrapper">
       <div class="chart-header">
-        <h3>{{title}}</h3>
+        <h3>{{ title }}</h3>
       </div>
       <div class="chart-container">
         <canvas #chartCanvas></canvas>
       </div>
     </div>
   `,
-  styles: [`
-    .chart-wrapper {
-      padding: 20px;
-    }
+  styles: [
+    `
+      .chart-wrapper {
+        padding: 20px;
+      }
 
-    .chart-header {
-      margin-bottom: 20px;
-    }
+      .chart-header {
+        margin-bottom: 20px;
+      }
 
-    .chart-header h3 {
-      margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: #2c3e50;
-    }
+      .chart-header h3 {
+        margin: 0;
+        font-size: 18px;
+        font-weight: 600;
+        color: #2c3e50;
+      }
 
-    .chart-container {
-      position: relative;
-      width: 100%;
-      height: 300px;
-    }
+      .chart-container {
+        position: relative;
+        width: 100%;
+        height: 300px;
+      }
 
-    canvas {
-      max-width: 100%;
-      height: auto !important;
-    }
-  `]
+      canvas {
+        max-width: 100%;
+        height: auto !important;
+      }
+    `,
+  ],
 })
-export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
-  @ViewChild('chartCanvas', { static: true }) chartCanvas!: ElementRef<HTMLCanvasElement>;
+export class ChartComponent
+  implements OnInit, AfterViewInit, OnDestroy, OnChanges
+{
+  @ViewChild('chartCanvas', { static: true })
+  chartCanvas!: ElementRef<HTMLCanvasElement>;
   @Input() title!: string;
   @Input() data: any;
   @Input() type: ChartType = 'line';
@@ -107,7 +129,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
   }
 
   private getLineChartConfig(): ChartConfiguration {
-    const values = this.data?.values || [100, 150, 120, 180, 160, 200, 175, 220];
+    const values = this.data?.values || [
+      100, 150, 120, 180, 160, 200, 175, 220,
+    ];
     const labels = values.map((_: any, index: number) => `Day ${index + 1}`);
 
     return {
@@ -127,9 +151,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             pointBorderColor: '#ffffff',
             pointBorderWidth: 2,
             pointRadius: 5,
-            pointHoverRadius: 7
-          }
-        ]
+            pointHoverRadius: 7,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -143,9 +167,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
               padding: 20,
               font: {
                 size: 12,
-                family: 'Arial, sans-serif'
-              }
-            }
+                family: 'Arial, sans-serif',
+              },
+            },
           },
           tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -154,43 +178,43 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             borderColor: '#3498db',
             borderWidth: 1,
             cornerRadius: 6,
-            displayColors: false
-          }
+            displayColors: false,
+          },
         },
         scales: {
           x: {
             grid: {
-              display: false
+              display: false,
             },
             ticks: {
               font: {
-                size: 11
+                size: 11,
               },
-              color: '#7f8c8d'
-            }
+              color: '#7f8c8d',
+            },
           },
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.1)'
+              color: 'rgba(0, 0, 0, 0.1)',
             },
             ticks: {
               font: {
-                size: 11
+                size: 11,
               },
               color: '#7f8c8d',
-              callback: function(value: any) {
+              callback: function (value: any) {
                 return '$' + value.toLocaleString();
-              }
-            }
-          }
+              },
+            },
+          },
         },
         elements: {
           point: {
-            hoverBackgroundColor: '#3498db'
-          }
-        }
-      }
+            hoverBackgroundColor: '#3498db',
+          },
+        },
+      },
     };
   }
 
@@ -199,7 +223,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
       { label: 'Cash', value: 45, color: '#3498db' },
       { label: 'Credit Card', value: 30, color: '#2ecc71' },
       { label: 'Insurance', value: 20, color: '#f39c12' },
-      { label: 'Other', value: 5, color: '#e74c3c' }
+      { label: 'Other', value: 5, color: '#e74c3c' },
     ];
 
     return {
@@ -213,9 +237,9 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             borderColor: '#ffffff',
             borderWidth: 2,
             hoverBorderWidth: 3,
-            hoverOffset: 10
-          }
-        ]
+            hoverOffset: 10,
+          },
+        ],
       },
       options: {
         responsive: true,
@@ -229,27 +253,29 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
               padding: 15,
               font: {
                 size: 12,
-                family: 'Arial, sans-serif'
+                family: 'Arial, sans-serif',
               },
-              generateLabels: (chart) => {
-                const data = chart.data;
+              generateLabels: (chart: Chart) => {
+                const data: ChartData = chart.data;
                 if (data.labels && data.datasets.length) {
-                  return data.labels.map((label, i) => {
-                    const dataset = data.datasets[0];
-                    const value = dataset.data[i] as number;
-                    return {
-                      text: `${label}: ${value}%`,
-                      fillStyle: (dataset.backgroundColor as string[])[i] as string,
-                      strokeStyle: dataset.borderColor as string,
-                      lineWidth: dataset.borderWidth as number,
-                      hidden: false,
-                      index: i
-                    };
-                  });
+                  return (data.labels as string[]).map(
+                    (label: string, i: number) => {
+                      const dataset = data.datasets[0] as ChartDataset;
+                      const value = dataset.data[i] as number;
+                      return {
+                        text: `${label}: ${value}%`,
+                        fillStyle: (dataset.backgroundColor as string[])[i],
+                        strokeStyle: dataset.borderColor as string,
+                        lineWidth: dataset.borderWidth as number,
+                        hidden: false,
+                        index: i,
+                      };
+                    }
+                  );
                 }
                 return [];
-              }
-            }
+              },
+            },
           },
           tooltip: {
             backgroundColor: 'rgba(0, 0, 0, 0.8)',
@@ -259,19 +285,19 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             borderWidth: 1,
             cornerRadius: 6,
             callbacks: {
-              label: function(context: any) {
+              label: function (context: any) {
                 return `${context.label}: ${context.parsed}%`;
-              }
-            }
-          }
+              },
+            },
+          },
         },
         cutout: '60%',
         elements: {
           arc: {
-            borderWidth: 2
-          }
-        }
-      } as any
+            borderWidth: 2,
+          },
+        },
+      } as any,
     };
   }
 }
