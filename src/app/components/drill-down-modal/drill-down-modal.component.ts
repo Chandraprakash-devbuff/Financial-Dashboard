@@ -43,9 +43,7 @@ Chart.register(...registerables);
           <div class="charts-section">
             <div class="chart-container">
               <h4>Current vs Previous Period Comparison</h4>
-              <div class="chart-wrapper-inner">
-                <canvas #comparisonChart width="800" height="400"></canvas>
-              </div>
+              <canvas #comparisonChart></canvas>
             </div>
           </div>
 
@@ -200,16 +198,8 @@ Chart.register(...registerables);
       color: #1e293b;
     }
 
-    .chart-wrapper-inner {
-      position: relative;
-      width: 100%;
-      max-height: 400px;
-      min-height: 300px;
-    }
-
     .chart-container canvas {
-      width: 100% !important;
-      height: 100% !important;
+      max-height: 400px;
     }
 
     .table-section h4 {
@@ -412,46 +402,46 @@ export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy
             mode: 'index'
           },
           legend: {
-            position: 'top'
-              position: 'top',
-              labels: {
-                usePointStyle: true,
-                padding: 20
+            position: 'top',
+            labels: {
+              usePointStyle: true,
+              padding: 20
+            }
+          },
+          tooltip: {
+            callbacks: {
+              label: function(context: any) {
+                return context.dataset.label + ': ₹' + context.parsed.y.toLocaleString('en-IN');
               }
             },
-            tooltip: {
-              callbacks: {
-                label: function(context: any) {
-                  return context.dataset.label + ': ₹' + context.parsed.y.toLocaleString('en-IN');
-                }
-              }
-              borderWidth: 1,
-              borderRadius: 4
+            borderWidth: 1,
+            borderRadius: 4
+          }
+        },
         scales: {
-            x: {
-              grid: {
-                display: false
-              }
-            },
+          x: {
+            grid: {
+              display: false
+            }
+          },
           y: {
             beginAtZero: true,
-              grid: {
-                color: 'rgba(148, 163, 184, 0.1)'
-              },
+            grid: {
+              color: 'rgba(148, 163, 184, 0.1)'
+            },
             ticks: {
               callback: function(value: any) {
-                  return '₹' + value.toLocaleString('en-IN');
-              borderWidth: 1,
-              borderRadius: 4
+                return '₹' + value.toLocaleString('en-IN');
+              }
             }
           }
         }
       }
     };
 
+    this.chart = new Chart(ctx, config);
     } catch (error) {
       console.error('Error creating chart:', error);
     }
-    this.chart = new Chart(ctx, config);
   }
 }
