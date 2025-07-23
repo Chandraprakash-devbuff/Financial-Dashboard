@@ -55,7 +55,9 @@ export class DashboardService {
       
       // Chart data
       revenueChartData: {
-        values: [3200, 3800, 3500, 4200, 3900, 4500, 4100, 4250]
+        values: period === 'day' ? [4250] : 
+                period === 'mtd' ? [3200, 3800, 3500, 4200, 3900, 4500, 4100, 4250] :
+                [75000, 82000, 78000, 85000, 88000, 92000, 89000, 95000, 91000, 87000, 90000, 85000]
       },
       
       paymentModeData: {
