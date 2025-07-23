@@ -3,119 +3,140 @@ import { CommonModule } from '@angular/common';
 import { KpiCardComponent } from '../kpi-card/kpi-card.component';
 import { ChartComponent } from '../chart/chart.component';
 import { DataTableComponent } from '../data-table/data-table.component';
+import { DrillDownModalComponent } from '../drill-down-modal/drill-down-modal.component';
 import { DashboardService } from '../../services/dashboard.service';
+import { DrillDownData } from '../../models/dashboard.model';
 import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-dashboard',
   standalone: true,
-  imports: [CommonModule, KpiCardComponent, ChartComponent, DataTableComponent, FormsModule],
+  imports: [CommonModule, KpiCardComponent, ChartComponent, DataTableComponent, DrillDownModalComponent, FormsModule],
   template: `
-    <div class="dashboard-container">
+    <div class="dashboard-container animate-fadeInUp">
       <!-- Header -->
-      <div class="dashboard-header">
-        <h1>Financial Dashboard</h1>
+      <div class="dashboard-header glass-effect">
+        <div class="header-content">
+          <h1 class="dashboard-title text-gradient">Financial Analytics</h1>
+          <p class="dashboard-subtitle">Real-time insights across 14+ cities</p>
+        </div>
         <div class="header-controls">
-          <select [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
+          <select class="period-selector glass-effect" [(ngModel)]="selectedPeriod" (change)="onPeriodChange()">
             <option value="day">Per Day</option>
             <option value="mtd">Month to Date</option>
             <option value="ytd">Year to Date</option>
           </select>
-          <button class="refresh-btn" (click)="refreshData()">Refresh</button>
+          <button class="refresh-btn glass-effect" (click)="refreshData()">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M17.65 6.35C16.2 4.9 14.21 4 12 4c-4.42 0-7.99 3.58-7.99 8s3.57 8 7.99 8c3.73 0 6.84-2.55 7.73-6h-2.08c-.82 2.33-3.04 4-5.65 4-3.31 0-6-2.69-6-6s2.69-6 6-6c1.66 0 3.14.69 4.22 1.78L13 11h7V4l-2.35 2.35z"/>
+            </svg>
+            Refresh
+          </button>
         </div>
       </div>
 
       <!-- KPI Cards Row 1 -->
-      <div class="kpi-row">
+      <div class="kpi-grid">
         <app-kpi-card
           [title]="'Total Revenue'"
-          [value]="dashboardData.totalRevenue"
-          [trend]="dashboardData.revenueTrend"
+          [value]="dashboardData.totalRevenue || 0"
+          [trend]="dashboardData.revenueTrend || 0"
           [period]="selectedPeriod"
           [format]="'currency'"
-          [trendColor]="'success'">
+          [trendColor]="'success'"
+          [kpiType]="'totalRevenue'"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
-          [title]="'Total Expenses'"
-          [value]="dashboardData.totalExpenses"
-          [trend]="dashboardData.expensesTrend"
+          [title]="'Cash Collection'"
+          [value]="dashboardData.totalCashCollection || 0"
+          [trend]="dashboardData.cashTrend || 0"
           [period]="selectedPeriod"
           [format]="'currency'"
-          [trendColor]="'danger'">
+          [trendColor]="'warning'"
+          [kpiType]="'cashCollection'"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
-          [title]="'Net Operating Income'"
-          [value]="dashboardData.netIncome"
-          [trend]="dashboardData.netIncomeTrend"
+          [title]="'Card Collection'"
+          [value]="dashboardData.totalCardCollection || 0"
+          [trend]="dashboardData.cardTrend || 0"
           [period]="selectedPeriod"
           [format]="'currency'"
-          [trendColor]="dashboardData.netIncome >= 0 ? 'success' : 'danger'">
+          [trendColor]="'info'"
+          [kpiType]="'cardCollection'"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
 
         <app-kpi-card
-          [title]="'Avg Revenue Per Patient'"
-          [value]="dashboardData.avgRevenuePerPatient"
-          [trend]="dashboardData.avgRevenueTrend"
+          [title]="'Digital Collection'"
+          [value]="dashboardData.totalDigitalCollection || 0"
+          [trend]="dashboardData.digitalTrend || 0"
           [period]="selectedPeriod"
           [format]="'currency'"
-          [trendColor]="'info'">
+          [trendColor]="'success'"
+          [kpiType]="'digitalCollection'"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
-      </div>
-
-      <!-- KPI Cards Row 2 -->
-      <div class="kpi-row">
         <app-kpi-card
-          [title]="'Reconciliation %'"
-          [value]="dashboardData.reconciliationPercentage"
-          [trend]="dashboardData.reconciliationTrend"
+          [title]="'Consulting Fees'"
+          [value]="dashboardData.totalConsultingFees || 0"
+          [trend]="dashboardData.consultingTrend || 0"
+          [period]="selectedPeriod"
+          [format]="'currency'"
+          [trendColor]="'info'"
+          [kpiType]="'consultingFees'"
+          (cardClick)="onKpiCardClick($event)">
+        </app-kpi-card>
+
+        <app-kpi-card
+          [title]="'Surgical Revenue'"
+          [value]="dashboardData.totalSurgicalRevenue || 0"
+          [trend]="dashboardData.surgicalTrend || 0"
+          [period]="selectedPeriod"
+          [format]="'currency'"
+          [trendColor]="'success'"
+          [kpiType]="'surgicalRevenue'"
+          (cardClick)="onKpiCardClick($event)">
+        </app-kpi-card>
+
+        <app-kpi-card
+          [title]="'Avg Revenue/Patient'"
+          [value]="dashboardData.avgRevenuePerPatient || 0"
+          [trend]="dashboardData.avgRevenueTrend || 0"
+          [period]="selectedPeriod"
+          [format]="'currency'"
+          [trendColor]="'info'"
+          [kpiType]="'avgRevenue'"
+          (cardClick)="onKpiCardClick($event)">
+        </app-kpi-card>
+
+        <app-kpi-card
+          [title]="'Digital Payment %'"
+          [value]="dashboardData.digitalPaymentPercentage || 0"
+          [trend]="dashboardData.digitalPercentTrend || 0"
           [period]="selectedPeriod"
           [format]="'percentage'"
-          [trendColor]="'success'">
-        </app-kpi-card>
-
-        <app-kpi-card
-          [title]="'Cash on Hand'"
-          [value]="dashboardData.cashOnHand"
-          [trend]="dashboardData.cashTrend"
-          [period]="selectedPeriod"
-          [format]="'currency'"
-          [trendColor]="'info'">
-        </app-kpi-card>
-
-        <app-kpi-card
-          [title]="'Bank Balance'"
-          [value]="dashboardData.bankBalance"
-          [trend]="dashboardData.bankTrend"
-          [period]="selectedPeriod"
-          [format]="'currency'"
-          [trendColor]="'success'">
-        </app-kpi-card>
-
-        <app-kpi-card
-          [title]="'AR Days'"
-          [value]="dashboardData.arDays"
-          [trend]="dashboardData.arDaysTrend"
-          [period]="selectedPeriod"
-          [format]="'number'"
-          [suffix]="'days'"
-          [trendColor]="'warning'">
+          [trendColor]="'success'"
+          [kpiType]="'digitalPercent'"
+          (cardClick)="onKpiCardClick($event)">
         </app-kpi-card>
       </div>
 
       <!-- Charts Section -->
-      <div class="charts-section">
-        <div class="chart-container">
+      <div class="charts-grid">
+        <div class="chart-card glass-effect">
           <app-chart
-            [title]="'Revenue Trend'"
+            [title]="'City-wise Revenue Distribution'"
             [data]="dashboardData.revenueChartData"
             [type]="'line'"
             [height]="300">
           </app-chart>
         </div>
 
-        <div class="chart-container">
+        <div class="chart-card glass-effect">
           <app-chart
             [title]="'Payment Modes'"
             [data]="dashboardData.paymentModeData"
@@ -126,121 +147,182 @@ import { FormsModule } from '@angular/forms';
       </div>
 
       <!-- Data Tables Section -->
-      <div class="tables-section">
-        <div class="table-container">
+      <div class="tables-grid">
+        <div class="table-card glass-effect">
           <app-data-table
-            [title]="'Payment Mode Breakdown'"
-            [data]="dashboardData.paymentModeBreakdown"
-            [columns]="paymentModeColumns">
+            [title]="'City-wise Revenue Breakdown'"
+            [data]="dashboardData.cityRevenueData"
+            [columns]="cityRevenueColumns">
           </app-data-table>
         </div>
 
-        <div class="table-container">
+        <div class="table-card glass-effect">
           <app-data-table
-            [title]="'Bank Account Summary'"
-            [data]="dashboardData.bankAccountSummary"
-            [columns]="bankAccountColumns">
+            [title]="'Top Performing Cities'"
+            [data]="getTopCities()"
+            [columns]="topCitiesColumns">
           </app-data-table>
         </div>
       </div>
+
+      <!-- Drill Down Modal -->
+      <app-drill-down-modal
+        [data]="drillDownData"
+        [isVisible]="showDrillDown"
+        (close)="closeDrillDown()">
+      </app-drill-down-modal>
     </div>
   `,
   styles: [`
     .dashboard-container {
-      padding: 20px;
-      background-color: #f5f7fa;
+      padding: 24px;
       min-height: 100vh;
+      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
     }
 
     .dashboard-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 30px;
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      margin-bottom: 32px;
+      padding: 32px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
     }
 
-    .dashboard-header h1 {
+    .header-content {
+      flex: 1;
+    }
+
+    .dashboard-title {
       margin: 0;
-      color: #2c3e50;
-      font-size: 28px;
-      font-weight: 600;
+      font-size: 36px;
+      font-weight: 800;
+      line-height: 1.2;
+    }
+
+    .dashboard-subtitle {
+      margin: 8px 0 0 0;
+      color: #94a3b8;
+      font-size: 16px;
+      font-weight: 400;
     }
 
     .header-controls {
       display: flex;
-      gap: 15px;
+      gap: 16px;
       align-items: center;
     }
 
-    .header-controls select {
-      padding: 8px 12px;
-      border: 1px solid #ddd;
-      border-radius: 6px;
+    .period-selector {
+      padding: 12px 16px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
       font-size: 14px;
+      background: rgba(255, 255, 255, 0.05);
+      color: #e2e8f0;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    .period-selector:hover {
+      border-color: rgba(59, 130, 246, 0.3);
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .period-selector option {
+      background: #1a1a2e;
+      color: #e2e8f0;
     }
 
     .refresh-btn {
-      background: #3498db;
-      color: white;
-      border: none;
-      padding: 8px 16px;
-      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      background: rgba(59, 130, 246, 0.1);
+      color: #3b82f6;
       cursor: pointer;
-      font-size: 14px;
-      transition: background 0.3s;
+      font-weight: 600;
+      transition: all 0.3s ease;
     }
 
     .refresh-btn:hover {
-      background: #2980b9;
+      background: rgba(59, 130, 246, 0.2);
+      transform: translateY(-2px);
+      box-shadow: 0 8px 25px rgba(59, 130, 246, 0.3);
     }
 
-    .kpi-row {
+    .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 20px;
-      margin-bottom: 30px;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+      margin-bottom: 40px;
     }
 
-    .charts-section {
+    .charts-grid {
       display: grid;
       grid-template-columns: 2fr 1fr;
-      gap: 20px;
-      margin-bottom: 30px;
+      gap: 24px;
+      margin-bottom: 40px;
     }
 
-    .chart-container {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-      min-height: 350px;
+    .chart-card {
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      min-height: 400px;
+      transition: all 0.3s ease;
     }
 
-    .tables-section {
+    .chart-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    }
+
+    .tables-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      gap: 24px;
     }
 
-    .table-container {
-      background: white;
-      border-radius: 12px;
-      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    .table-card {
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: all 0.3s ease;
+    }
+
+    .table-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
     }
 
     @media (max-width: 768px) {
-      .kpi-row {
+      .dashboard-container {
+        padding: 16px;
+      }
+      
+      .dashboard-header {
+        flex-direction: column;
+        gap: 20px;
+        padding: 24px;
+      }
+      
+      .dashboard-title {
+        font-size: 28px;
+      }
+      
+      .kpi-grid {
         grid-template-columns: 1fr;
       }
       
-      .charts-section {
+      .charts-grid {
         grid-template-columns: 1fr;
       }
       
-      .tables-section {
+      .tables-grid {
         grid-template-columns: 1fr;
       }
     }
@@ -249,25 +331,32 @@ import { FormsModule } from '@angular/forms';
 export class DashboardComponent implements OnInit {
   selectedPeriod = 'mtd';
   dashboardData: any = {};
+  showDrillDown = false;
+  drillDownData: DrillDownData | null = null;
   
-  paymentModeColumns = [
-    { key: 'mode', label: 'Payment Mode' },
-    { key: 'amount', label: 'Amount', format: 'currency' },
-    { key: 'percentage', label: 'Percentage', format: 'percentage' },
-    { key: 'transactions', label: 'Transactions' }
+  cityRevenueColumns = [
+    { key: 'city', label: 'City' },
+    { key: 'revenue', label: 'Total Revenue', format: 'currency' },
+    { key: 'cash', label: 'Cash', format: 'currency' },
+    { key: 'card', label: 'Card', format: 'currency' },
+    { key: 'digital', label: 'Digital', format: 'currency' }
   ];
 
-  bankAccountColumns = [
-    { key: 'accountName', label: 'Account Name' },
-    { key: 'accountNumber', label: 'Account Number' },
-    { key: 'balance', label: 'Balance', format: 'currency' },
-    { key: 'lastUpdated', label: 'Last Updated', format: 'date' }
+  topCitiesColumns = [
+    { key: 'city', label: 'City' },
+    { key: 'revenue', label: 'Revenue', format: 'currency' },
+    { key: 'growth', label: 'Growth', format: 'percentage' }
   ];
 
   constructor(private dashboardService: DashboardService) {}
 
   ngOnInit() {
     this.loadDashboardData();
+    
+    // Add some entrance animation delay
+    setTimeout(() => {
+      document.querySelector('.dashboard-container')?.classList.add('animate-fadeInUp');
+    }, 100);
   }
 
   onPeriodChange() {
@@ -280,5 +369,25 @@ export class DashboardComponent implements OnInit {
 
   private loadDashboardData() {
     this.dashboardData = this.dashboardService.getDashboardData(this.selectedPeriod);
+  }
+
+  onKpiCardClick(kpiType: string) {
+    this.drillDownData = this.dashboardService.getDrillDownData(kpiType);
+    this.showDrillDown = true;
+  }
+
+  closeDrillDown() {
+    this.showDrillDown = false;
+    this.drillDownData = null;
+  }
+
+  getTopCities() {
+    return this.dashboardData.cityRevenueData
+      ?.sort((a: any, b: any) => b.revenue - a.revenue)
+      .slice(0, 5)
+      .map((city: any, index: number) => ({
+        ...city,
+        growth: (Math.random() * 20 - 5).toFixed(1) // Simulated growth percentage
+      })) || [];
   }
 }

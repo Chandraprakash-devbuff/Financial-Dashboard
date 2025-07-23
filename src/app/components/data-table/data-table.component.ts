@@ -8,18 +8,18 @@ import { CommonModule } from '@angular/common';
   template: `
     <div class="table-wrapper">
       <div class="table-header">
-        <h3>{{title}}</h3>
+        <h3 class="table-title">{{title}}</h3>
       </div>
       <div class="table-container">
         <table class="data-table">
           <thead>
             <tr>
-              <th *ngFor="let column of columns">{{column.label}}</th>
+              <th *ngFor="let column of columns" class="table-header-cell">{{column.label}}</th>
             </tr>
           </thead>
           <tbody>
-            <tr *ngFor="let row of data">
-              <td *ngFor="let column of columns">
+            <tr *ngFor="let row of data" class="table-row">
+              <td *ngFor="let column of columns" class="table-cell">
                 {{getFormattedValue(row[column.key], column.format)}}
               </td>
             </tr>
@@ -30,18 +30,21 @@ import { CommonModule } from '@angular/common';
   `,
   styles: [`
     .table-wrapper {
-      padding: 20px;
+      padding: 24px;
     }
 
     .table-header {
       margin-bottom: 20px;
     }
 
-    .table-header h3 {
+    .table-title {
       margin: 0;
-      font-size: 18px;
-      font-weight: 600;
-      color: #2c3e50;
+      font-size: 20px;
+      font-weight: 700;
+      color: #f1f5f9;
+      background: linear-gradient(135deg, #3b82f6, #8b5cf6);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
     }
 
     .table-container {
@@ -51,30 +54,45 @@ import { CommonModule } from '@angular/common';
     .data-table {
       width: 100%;
       border-collapse: collapse;
-      font-size: 14px;
+      font-size: 13px;
+      border-radius: 12px;
+      overflow: hidden;
     }
 
-    .data-table th {
-      background: #f8f9fa;
-      padding: 12px 8px;
+    .table-header-cell {
+      background: rgba(255, 255, 255, 0.05);
+      padding: 16px 12px;
       text-align: left;
-      font-weight: 600;
-      color: #2c3e50;
-      border-bottom: 2px solid #dee2e6;
+      font-weight: 700;
+      color: #f1f5f9;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      font-size: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
-    .data-table td {
-      padding: 12px 8px;
-      border-bottom: 1px solid #dee2e6;
+    .table-cell {
+      padding: 16px 12px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       vertical-align: middle;
+      color: #e2e8f0;
+      font-weight: 500;
     }
 
-    .data-table tr:hover {
-      background: #f8f9fa;
+    .table-row:hover {
+      background: rgba(255, 255, 255, 0.03);
+      transform: scale(1.01);
+      transition: all 0.2s ease;
     }
 
-    .data-table tr:last-child td {
+    .table-row:last-child .table-cell {
       border-bottom: none;
+    }
+
+    .table-container {
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255, 255, 255, 0.05);
     }
   `]
 })
@@ -88,16 +106,19 @@ export class DataTableComponent {
 
     switch (format) {
       case 'currency':
-        return new Intl.NumberFormat('en-US', {
+        return new Intl.NumberFormat('en-IN', {
           style: 'currency',
-          currency: 'USD'
+          currency: 'INR',
+          minimumFractionDigits: 0,
+          maximumFractionDigits: 0,
+          notation: value >= 10000000 ? 'compact' : 'standard'
         }).format(value);
       case 'percentage':
         return value.toFixed(1) + '%';
       case 'date':
-        return new Date(value).toLocaleDateString();
+        return new Date(value).toLocaleDateString('en-IN');
       default:
-        return value.toString();
+        return typeof value === 'number' ? value.toLocaleString('en-IN') : value.toString();
     }
   }
 }
