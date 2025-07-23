@@ -173,7 +173,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             beginAtZero: true,
             grid: {
               color: 'rgba(0, 0, 0, 0.1)',
-              drawBorder: false
+              borderColor: 'transparent'
             },
             ticks: {
               font: {
@@ -240,7 +240,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
                     const value = dataset.data[i] as number;
                     return {
                       text: `${label}: ${value}%`,
-                      fillStyle: dataset.backgroundColor?.[i] as string,
+                      fillStyle: (dataset.backgroundColor as string[])[i] as string,
                       strokeStyle: dataset.borderColor as string,
                       lineWidth: dataset.borderWidth as number,
                       hidden: false,
