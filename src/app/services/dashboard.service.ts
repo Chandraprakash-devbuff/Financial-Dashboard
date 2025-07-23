@@ -189,13 +189,19 @@ export class DashboardService {
   ];
 
   getDashboardData(period: string = 'mtd') {
-    const grandTotal = this.sampleData.paymentReports.data[0];
-    const consultingFees = this.sampleData.paymentReports.data[1];
-    const surgicalLasers = this.sampleData.paymentReports.data[2];
+    // Load data from the JSON file
+    const data = this.loadDataFromFile();
     
-    const cashCollection = this.sampleData.cardReports.data[0];
-    const cardCollection = this.sampleData.cardReports.data[1];
-    const digitalCollection = this.sampleData.cardReports.data[2];
+    const grandTotal = data.paymentReports.data[0];
+    const consultingFees = data.paymentReports.data[1];
+    const treatmentCharges = data.paymentReports.data[2];
+    const investigations = data.paymentReports.data[3];
+    const surgicalLasers = data.paymentReports.data[4];
+    
+    const cashCollection = data.cardReports.data[0];
+    const corporateInsurance = data.cardReports.data[1];
+    const cardCollection = data.cardReports.data[2];
+    const digitalCollection = data.cardReports.data[3];
 
     // Calculate KPIs based on real data
     const totalRevenue = grandTotal.Total;
@@ -204,9 +210,11 @@ export class DashboardService {
     const totalDigitalCollection = digitalCollection.Total;
     const totalConsultingFees = consultingFees.Total;
     const totalSurgicalRevenue = surgicalLasers.Total;
+    const totalTreatmentCharges = treatmentCharges.Total;
+    const totalInvestigations = investigations.Total;
 
     // Calculate averages and percentages
-    const avgRevenuePerPatient = Math.round(totalRevenue / 1200); // Assuming 1200 patients
+    const avgRevenuePerPatient = Math.round(totalRevenue / 15000); // Assuming 15000 patients
     const digitalPaymentPercentage = ((totalCardCollection + totalDigitalCollection) / (totalCashCollection + totalCardCollection + totalDigitalCollection)) * 100;
 
     return {
@@ -216,6 +224,8 @@ export class DashboardService {
       totalDigitalCollection,
       totalConsultingFees,
       totalSurgicalRevenue,
+      totalTreatmentCharges,
+      totalInvestigations,
       avgRevenuePerPatient,
       digitalPaymentPercentage,
       
@@ -226,12 +236,15 @@ export class DashboardService {
       digitalTrend: 15.2,
       consultingTrend: 5.8,
       surgicalTrend: 9.1,
+      treatmentTrend: 7.2,
+      investigationsTrend: 4.8,
       avgRevenueTrend: 3.2,
       digitalPercentTrend: 4.5,
       
       // Chart data
       revenueChartData: {
-        values: this.cities.map(city => (grandTotal as any)[city] || 0)
+        values: this.cities.map(city => (grandTotal as any)[city] || 0),
+        labels: this.cities
       },
       
       paymentModeData: {
@@ -252,8 +265,14 @@ export class DashboardService {
       })),
 
       // Raw data for drill-down
-      rawData: this.sampleData
+      rawData: data
     };
+  }
+
+  private loadDataFromFile() {
+    // In a real application, this would be an HTTP call
+    // For now, we'll use the embedded data
+    return this.sampleData;
   }
 
   getDrillDownData(kpiType: string): DrillDownData {

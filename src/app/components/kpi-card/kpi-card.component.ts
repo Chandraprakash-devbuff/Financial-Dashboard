@@ -67,12 +67,15 @@ import { CommonModule } from '@angular/common';
       border-radius: 16px;
       padding: 24px;
       transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       overflow: hidden;
       min-height: 160px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .kpi-card.clickable {
@@ -81,7 +84,7 @@ import { CommonModule } from '@angular/common';
 
     .kpi-card:hover {
       transform: translateY(-4px) scale(1.02);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3), 0 0 30px rgba(59, 130, 246, 0.2);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15), 0 0 30px rgba(59, 130, 246, 0.3);
       border-color: rgba(59, 130, 246, 0.3);
     }
 
@@ -92,9 +95,9 @@ import { CommonModule } from '@angular/common';
       right: 0;
       bottom: 0;
       background: linear-gradient(135deg, 
-        rgba(59, 130, 246, 0.1) 0%, 
-        rgba(139, 92, 246, 0.05) 50%, 
-        rgba(236, 72, 153, 0.1) 100%);
+        rgba(59, 130, 246, 0.05) 0%, 
+        rgba(139, 92, 246, 0.03) 50%, 
+        rgba(236, 72, 153, 0.05) 100%);
       opacity: 0;
       transition: opacity 0.3s ease;
       z-index: 0;
@@ -126,7 +129,7 @@ import { CommonModule } from '@angular/common';
       margin: 0;
       font-size: 14px;
       font-weight: 600;
-      color: #94a3b8;
+      color: #64748b;
       text-transform: uppercase;
       letter-spacing: 0.8px;
       line-height: 1.2;
@@ -135,8 +138,8 @@ import { CommonModule } from '@angular/common';
     .kpi-period {
       display: inline-block;
       font-size: 11px;
-      color: #64748b;
-      background: rgba(255, 255, 255, 0.1);
+      color: #475569;
+      background: rgba(148, 163, 184, 0.1);
       padding: 4px 8px;
       border-radius: 6px;
       margin-top: 4px;
@@ -174,7 +177,7 @@ import { CommonModule } from '@angular/common';
     .kpi-value {
       font-size: 32px;
       font-weight: 800;
-      color: #f1f5f9;
+      color: #1e293b;
       display: flex;
       align-items: baseline;
       line-height: 1;
@@ -183,7 +186,7 @@ import { CommonModule } from '@angular/common';
     .kpi-suffix {
       font-size: 16px;
       font-weight: 500;
-      color: #94a3b8;
+      color: #64748b;
       margin-left: 6px;
     }
 
@@ -247,7 +250,7 @@ import { CommonModule } from '@angular/common';
       position: absolute;
       top: 16px;
       right: 16px;
-      color: #64748b;
+      color: #94a3b8;
       opacity: 0;
       transition: all 0.3s ease;
       z-index: 2;

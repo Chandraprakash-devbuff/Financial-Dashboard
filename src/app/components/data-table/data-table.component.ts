@@ -41,7 +41,7 @@ import { CommonModule } from '@angular/common';
       margin: 0;
       font-size: 20px;
       font-weight: 700;
-      color: #f1f5f9;
+      color: #1e293b;
       background: linear-gradient(135deg, #3b82f6, #8b5cf6);
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
@@ -60,12 +60,12 @@ import { CommonModule } from '@angular/common';
     }
 
     .table-header-cell {
-      background: rgba(255, 255, 255, 0.05);
+      background: rgba(148, 163, 184, 0.1);
       padding: 16px 12px;
       text-align: left;
       font-weight: 700;
-      color: #f1f5f9;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      color: #1e293b;
+      border-bottom: 1px solid rgba(148, 163, 184, 0.2);
       font-size: 12px;
       text-transform: uppercase;
       letter-spacing: 0.5px;
@@ -73,14 +73,14 @@ import { CommonModule } from '@angular/common';
 
     .table-cell {
       padding: 16px 12px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(148, 163, 184, 0.1);
       vertical-align: middle;
-      color: #e2e8f0;
+      color: #374151;
       font-weight: 500;
     }
 
     .table-row:hover {
-      background: rgba(255, 255, 255, 0.03);
+      background: rgba(59, 130, 246, 0.05);
       transform: scale(1.01);
       transition: all 0.2s ease;
     }
@@ -92,7 +92,7 @@ import { CommonModule } from '@angular/common';
     .table-container {
       border-radius: 12px;
       overflow: hidden;
-      border: 1px solid rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(148, 163, 184, 0.1);
     }
   `]
 })
@@ -103,6 +103,25 @@ export class DataTableComponent {
 
   getFormattedValue(value: any, format?: string): string {
     if (value === null || value === undefined) return '-';
+    
+    // Handle string values that might contain percentages
+    if (typeof value === 'string') {
+      if (value.includes('%')) {
+        return value; // Return percentage strings as-is
+      }
+      // Try to parse string numbers
+      const numValue = parseFloat(value);
+      if (!isNaN(numValue)) {
+        value = numValue;
+      } else {
+        return value; // Return non-numeric strings as-is
+      }
+    }
+    
+    // Ensure value is a number for numeric formatting
+    if (typeof value !== 'number') {
+      return value.toString();
+    }
 
     switch (format) {
       case 'currency':
@@ -118,7 +137,7 @@ export class DataTableComponent {
       case 'date':
         return new Date(value).toLocaleDateString('en-IN');
       default:
-        return typeof value === 'number' ? value.toLocaleString('en-IN') : value.toString();
+        return value.toLocaleString('en-IN');
     }
   }
 }

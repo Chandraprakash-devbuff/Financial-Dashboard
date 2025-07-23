@@ -129,10 +129,8 @@ export class ChartComponent
   }
 
   private getLineChartConfig(): ChartConfiguration {
-    const values = this.data?.values || [
-      100, 150, 120, 180, 160, 200, 175, 220,
-    ];
-    const labels = values.map((_: any, index: number) => `Day ${index + 1}`);
+    const values = this.data?.values || [];
+    const labels = this.data?.labels || values.map((_: any, index: number) => `City ${index + 1}`);
 
     return {
       type: 'line',
@@ -142,12 +140,12 @@ export class ChartComponent
           {
             label: 'Revenue',
             data: values,
-            borderColor: '#3498db',
-            backgroundColor: 'rgba(52, 152, 219, 0.1)',
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59, 130, 246, 0.1)',
             borderWidth: 3,
             fill: true,
             tension: 0.4,
-            pointBackgroundColor: '#3498db',
+            pointBackgroundColor: '#3b82f6',
             pointBorderColor: '#ffffff',
             pointBorderWidth: 2,
             pointRadius: 5,
@@ -172,10 +170,10 @@ export class ChartComponent
             },
           },
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleColor: '#ffffff',
-            bodyColor: '#ffffff',
-            borderColor: '#3498db',
+            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#f1f5f9',
+            borderColor: '#3b82f6',
             borderWidth: 1,
             cornerRadius: 6,
             displayColors: false,
@@ -190,28 +188,28 @@ export class ChartComponent
               font: {
                 size: 11,
               },
-              color: '#7f8c8d',
+              color: '#64748b',
             },
           },
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.1)',
+              color: 'rgba(148, 163, 184, 0.2)',
             },
             ticks: {
               font: {
                 size: 11,
               },
-              color: '#7f8c8d',
+              color: '#64748b',
               callback: function (value: any) {
-                return '$' + value.toLocaleString();
+                return '₹' + value.toLocaleString();
               },
             },
           },
         },
         elements: {
           point: {
-            hoverBackgroundColor: '#3498db',
+            hoverBackgroundColor: '#3b82f6',
           },
         },
       },
@@ -220,10 +218,9 @@ export class ChartComponent
 
   private getDoughnutChartConfig(): ChartConfiguration {
     const segments = this.data?.segments || [
-      { label: 'Cash', value: 45, color: '#3498db' },
-      { label: 'Credit Card', value: 30, color: '#2ecc71' },
-      { label: 'Insurance', value: 20, color: '#f39c12' },
-      { label: 'Other', value: 5, color: '#e74c3c' },
+      { label: 'Cash', value: 45, color: '#3b82f6' },
+      { label: 'Card', value: 30, color: '#10b981' },
+      { label: 'Digital', value: 25, color: '#f59e0b' },
     ];
 
     return {
@@ -278,10 +275,10 @@ export class ChartComponent
             },
           },
           tooltip: {
-            backgroundColor: 'rgba(0, 0, 0, 0.8)',
-            titleColor: '#ffffff',
-            bodyColor: '#ffffff',
-            borderColor: '#3498db',
+            backgroundColor: 'rgba(30, 41, 59, 0.9)',
+            titleColor: '#f1f5f9',
+            bodyColor: '#f1f5f9',
+            borderColor: '#3b82f6',
             borderWidth: 1,
             cornerRadius: 6,
             callbacks: {

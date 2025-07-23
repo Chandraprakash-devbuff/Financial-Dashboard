@@ -177,7 +177,7 @@ import { FormsModule } from '@angular/forms';
     .dashboard-container {
       padding: 24px;
       min-height: 100vh;
-      background: linear-gradient(135deg, #0f0f23 0%, #1a1a2e 50%, #16213e 100%);
+      background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 50%, #cbd5e1 100%);
     }
 
     .dashboard-header {
@@ -187,7 +187,10 @@ import { FormsModule } from '@angular/forms';
       margin-bottom: 32px;
       padding: 32px;
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
     }
 
     .header-content {
@@ -203,7 +206,7 @@ import { FormsModule } from '@angular/forms';
 
     .dashboard-subtitle {
       margin: 8px 0 0 0;
-      color: #94a3b8;
+      color: #64748b;
       font-size: 16px;
       font-weight: 400;
     }
@@ -216,11 +219,11 @@ import { FormsModule } from '@angular/forms';
 
     .period-selector {
       padding: 12px 16px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       border-radius: 12px;
       font-size: 14px;
-      background: rgba(255, 255, 255, 0.05);
-      color: #e2e8f0;
+      background: rgba(255, 255, 255, 0.8);
+      color: #1e293b;
       font-weight: 500;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -228,12 +231,12 @@ import { FormsModule } from '@angular/forms';
 
     .period-selector:hover {
       border-color: rgba(59, 130, 246, 0.3);
-      background: rgba(255, 255, 255, 0.08);
+      background: rgba(255, 255, 255, 0.9);
     }
 
     .period-selector option {
-      background: #1a1a2e;
-      color: #e2e8f0;
+      background: #ffffff;
+      color: #1e293b;
     }
 
     .refresh-btn {
@@ -241,7 +244,7 @@ import { FormsModule } from '@angular/forms';
       align-items: center;
       gap: 8px;
       padding: 12px 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
       border-radius: 12px;
       background: rgba(59, 130, 246, 0.1);
       color: #3b82f6;
@@ -272,14 +275,17 @@ import { FormsModule } from '@angular/forms';
 
     .chart-card {
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       min-height: 400px;
       transition: all 0.3s ease;
     }
 
     .chart-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     .tables-grid {
@@ -290,13 +296,16 @@ import { FormsModule } from '@angular/forms';
 
     .table-card {
       border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(148, 163, 184, 0.2);
+      background: rgba(255, 255, 255, 0.8);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
       transition: all 0.3s ease;
     }
 
     .table-card:hover {
       transform: translateY(-4px);
-      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
     }
 
     @media (max-width: 768px) {
