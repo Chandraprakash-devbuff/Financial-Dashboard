@@ -172,8 +172,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
           y: {
             beginAtZero: true,
             grid: {
-              color: 'rgba(0, 0, 0, 0.1)',
-              borderColor: 'transparent'
+              color: 'rgba(0, 0, 0, 0.1)'
             },
             ticks: {
               font: {
@@ -272,7 +271,7 @@ export class ChartComponent implements OnInit, AfterViewInit, OnDestroy, OnChang
             borderWidth: 2
           }
         }
-      }
+      } as any
     };
   }
 }
