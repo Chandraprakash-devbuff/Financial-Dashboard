@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChild, ElementRef, AfterViewInit, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Chart, ChartConfiguration, registerables } from 'chart.js';
 
@@ -43,7 +43,9 @@ Chart.register(...registerables);
           <div class="charts-section">
             <div class="chart-container">
               <h4>Current vs Previous Period Comparison</h4>
-              <canvas #comparisonChart></canvas>
+              <div class="chart-wrapper-inner">
+                <canvas #comparisonChart width="800" height="400"></canvas>
+              </div>
             </div>
           </div>
 
@@ -198,8 +200,16 @@ Chart.register(...registerables);
       color: #1e293b;
     }
 
-    .chart-container canvas {
+    .chart-wrapper-inner {
+      position: relative;
+      width: 100%;
       max-height: 400px;
+      min-height: 300px;
+    }
+
+    .chart-container canvas {
+      width: 100% !important;
+      height: 100% !important;
     }
 
     .table-section h4 {
@@ -287,7 +297,7 @@ Chart.register(...registerables);
     }
   `]
 })
-export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy {
+export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy, OnChanges {
   @ViewChild('comparisonChart', { static: false }) comparisonChart!: ElementRef<HTMLCanvasElement>;
   @Input() isVisible = false;
   @Input() drillDownData: any = null;
@@ -297,10 +307,18 @@ export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy
 
   ngOnInit() {}
 
-  ngAfterViewInit() {
-    if (this.isVisible && this.drillDownData) {
-      setTimeout(() => this.createChart(), 100);
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes['isVisible'] && this.isVisible && this.drillDownData) {
+      // Delay chart creation to ensure DOM is ready
+      setTimeout(() => this.createChart(), 200);
     }
+    if (changes['drillDownData'] && this.drillDownData && this.isVisible) {
+      setTimeout(() => this.createChart(), 200);
+    }
+  }
+
+  ngAfterViewInit() {
+    // Chart will be created via ngOnChanges when data is available
   }
 
   ngOnDestroy() {
@@ -348,15 +366,22 @@ export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy
   }
 
   private createChart() {
-    if (!this.comparisonChart || !this.drillDownData) return;
+    if (!this.comparisonChart?.nativeElement || !this.drillDownData || !this.isVisible) {
+      return;
+    }
 
     const ctx = this.comparisonChart.nativeElement.getContext('2d');
-    if (!ctx) return;
+    if (!ctx) {
+      console.error('Could not get canvas context');
+      return;
+    }
 
     if (this.chart) {
       this.chart.destroy();
+      this.chart = null;
     }
 
+    try {
     const config: ChartConfiguration = {
       type: 'bar',
       data: {
@@ -382,23 +407,51 @@ export class DrillDownModalComponent implements OnInit, AfterViewInit, OnDestroy
         responsive: true,
         maintainAspectRatio: false,
         plugins: {
+          interaction: {
+            intersect: false,
+            mode: 'index'
+          },
           legend: {
             position: 'top'
-          }
-        },
+              position: 'top',
+              labels: {
+                usePointStyle: true,
+                padding: 20
+              }
+            },
+            tooltip: {
+              callbacks: {
+                label: function(context: any) {
+                  return context.dataset.label + ': ₹' + context.parsed.y.toLocaleString('en-IN');
+                }
+              }
+              borderWidth: 1,
+              borderRadius: 4
         scales: {
+            x: {
+              grid: {
+                display: false
+              }
+            },
           y: {
             beginAtZero: true,
+              grid: {
+                color: 'rgba(148, 163, 184, 0.1)'
+              },
             ticks: {
               callback: function(value: any) {
-                return '₹' + value.toLocaleString();
-              }
+                  return '₹' + value.toLocaleString('en-IN');
+              borderWidth: 1,
+              borderRadius: 4
             }
           }
         }
       }
     };
 
+    } catch (error) {
+      console.error('Error creating chart:', error);
+    }
     this.chart = new Chart(ctx, config);
   }
 }
